@@ -1,0 +1,4 @@
+CREATE USER 'GN'@'localhost' IDENTIFIED BY 'mypass';
+CREATE DATABASE db_webqtl;
+GRANT ALL PRIVILEGES ON db_webqtl.* TO 'GN'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
