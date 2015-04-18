@@ -1,29 +1,29 @@
 # gn2-docker
 GeneNetwork2 development server installation
 
+## Clone one of GN2 repo forks (unless already done)
+E.g.
+``` bash
+$ git clone git@github.com:zsloan/genenetwork2.git
+```
+
+While the repository is being cloned (it's quite large), start building the Docker image.
+
 ## Building the image
-Run `docker build` after cloning the repository:
+Run `docker build` after cloning the `gn2-docker` repository:
 ```bash
 $ cd gn2-docker
 $ docker build  -t gn2 .
 ```
 
-It should take ~1.5 hours.
+It should take about an hour.
 
-## Running the server
+## Running the server and making changes
+
+The development directory is mapped as a Docker volume, so that all updates to files in it are applied immediately:
 ```bash
-docker run -i -p 0.0.0.0:5003:5003 -t gn2
+<cd into genenetwork2 repository>
+docker run -i -t -v `pwd`:/home/zas1024/gene -p 5003:5003 gn2_v7
 ```
 
-Now its web interface is available at 0.0.0.0:5003
-
-## Making changes
-
-Find the container id in the `docker ps` output and run `bash` in that container. The following one-liner should work:
-```bash
-docker exec -i -t `docker ps | grep gn2 | cut -f1 -d' ' | head -n1` /bin/bash
-```
-
-Vim is already installed in the built image.
-
-
+In a few seconds, the web interface should become available at 0.0.0.0:5003
