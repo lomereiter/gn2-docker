@@ -22,8 +22,8 @@ It should take about an hour.
 
 The development directory is mapped as a Docker volume, so that all updates to files in it are applied immediately:
 ```bash
-<cd into genenetwork2 repository>
-docker run -i -t -v `pwd`:/home/zas1024/gene -p 5003:5003 gn2_v7
+$ cd genenetwork2
+$ docker run -i -t -v `pwd`:/home/zas1024/gene -p 5003:5003 gn2
 ```
 
 In a few seconds, the web interface should become available at 0.0.0.0:5003
