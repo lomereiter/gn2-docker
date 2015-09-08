@@ -82,4 +82,8 @@ EXPOSE 80
 # until path settings are introduced, simply use the same path
 RUN mkdir -p /home/zas1024
 
+# download and install / unpack plink (a requirement)
+RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip && \
+    unzip plink-1.07-x86_64.zip -d /home/zas1024
+
 CMD ["/usr/bin/supervisord"]
