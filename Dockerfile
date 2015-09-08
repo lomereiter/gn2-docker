@@ -15,7 +15,7 @@ RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/a
 
 # install the software
 RUN apt-get update && \
-    apt-get install -y python-dev libmysqlclient-dev \
+    apt-get install -y python-dev libffi-dev libmysqlclient-dev \
     libatlas-base-dev gfortran g++ python-pip libyaml-dev \
     mysql-server r-base r-base-dev colordiff ntp ufw wget \
     redis-server nginx
