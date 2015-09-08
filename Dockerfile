@@ -5,17 +5,20 @@ WORKDIR /root
 
 # based on https://github.com/zsloan/genenetwork2/blob/master/misc/gn_installation_notes.txt
 
+# Add keys an source to install the latest stable version of R
+RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" > /etc/apt/sources.list.d/r-stable-trusty.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+# Add keys an source to install the latest stable version of nginx
+RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C
+
 # install the software
 RUN apt-get update && \
-    apt-get install -y python-dev libmysqlclient-dev \
+    apt-get install -y apt-utils git python-dev libffi-dev libmysqlclient-dev \
     libatlas-base-dev gfortran g++ python-pip libyaml-dev \
-    mysql-server r-base-dev colordiff ntp ufw wget \
-    redis-server
-
-RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
-    apt-get update && \
-    apt-get install -y nginx
+    mysql-server r-base r-base-dev colordiff ntp ufw wget \
+    redis-server nginx
 
 # install virtualenv, set default interpreter to bash
 RUN pip install virtualenv
@@ -33,7 +36,7 @@ RUN /etc/init.d/mysql start && \
     gzip -dc | mysql --user=GN --password=mypass db_webqtl
 
 # fetch the list of Python module dependencies
-RUN wget --quiet https://raw.githubusercontent.com/zsloan/genenetwork2/master/misc/requirements.txt
+RUN wget --quiet https://raw.githubusercontent.com/dannyarends/genenetwork2/master/misc/requirements.txt
 
 # install pp module separately
 RUN wget http://www.parallelpython.com/downloads/pp/pp-1.6.3.tar.gz && \
@@ -74,9 +77,15 @@ COPY run_gn2_server.sh /root/
 COPY supervisord.conf /etc/supervisor/conf.d/
 RUN mkdir -p /var/log/supervisor
 
-EXPOSE 80
-
 # until path settings are introduced, simply use the same path
 RUN mkdir -p /home/zas1024
+
+# download and install / unpack plink (a requirement)
+RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip && \
+    unzip plink-1.07-x86_64.zip -d /home/zas1024
+
+# download and install pyLMM inside the docker image (for development you might want to add it from the localhost on the docker run commandline)
+# docker run -i -t -v $(pwd):/home/zas1024/gene -v /path/to/pylmm_gn2/:/home/zas1024/pyLMM -p 5003:5003 gn
+RUN git clone https://github.com/genenetwork/pylmm_gn2.git /home/zas1024/pyLMM
 
 CMD ["/usr/bin/supervisord"]
