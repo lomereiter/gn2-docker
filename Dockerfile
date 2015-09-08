@@ -5,17 +5,20 @@ WORKDIR /root
 
 # based on https://github.com/zsloan/genenetwork2/blob/master/misc/gn_installation_notes.txt
 
+# Add keys an source to install the latest stable version of R
+RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" > /etc/apt/sources.list.d/r-stable-trusty.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+# Add keys an source to install the latest stable version of nginx
+RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
+
 # install the software
 RUN apt-get update && \
     apt-get install -y python-dev libmysqlclient-dev \
     libatlas-base-dev gfortran g++ python-pip libyaml-dev \
-    mysql-server r-base-dev colordiff ntp ufw wget \
-    redis-server
-
-RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
-    apt-get update && \
-    apt-get install -y nginx
+    mysql-server r-base r-base-dev colordiff ntp ufw wget \
+    redis-server nginx
 
 # install virtualenv, set default interpreter to bash
 RUN pip install virtualenv
