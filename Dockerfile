@@ -11,11 +11,11 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" > /etc/apt/sourc
 
 # Add keys an source to install the latest stable version of nginx
 RUN echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C
 
 # install the software
 RUN apt-get update && \
-    apt-get install -y python-dev libffi-dev libmysqlclient-dev \
+    apt-get install -y apt-utils git python-dev libffi-dev libmysqlclient-dev \
     libatlas-base-dev gfortran g++ python-pip libyaml-dev \
     mysql-server r-base r-base-dev colordiff ntp ufw wget \
     redis-server nginx
@@ -86,6 +86,8 @@ RUN mkdir -p /home/zas1024
 RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip && \
     unzip plink-1.07-x86_64.zip -d /home/zas1024
 
+# download and install pyLMM inside the docker image (for development you might want to add it from the localhost on the docker run commandline)
+# docker run -i -t -v $(pwd):/home/zas1024/gene -v /path/to/pylmm_gn2/:/home/zas1024/pyLMM -p 5003:5003 gn
 RUN git clone git@github.com:genenetwork/pylmm_gn2.git /home/zas1024/pyLMM
 
 CMD ["/usr/bin/supervisord"]
