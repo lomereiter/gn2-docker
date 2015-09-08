@@ -77,8 +77,6 @@ COPY run_gn2_server.sh /root/
 COPY supervisord.conf /etc/supervisor/conf.d/
 RUN mkdir -p /var/log/supervisor
 
-EXPOSE 80
-
 # until path settings are introduced, simply use the same path
 RUN mkdir -p /home/zas1024
 
