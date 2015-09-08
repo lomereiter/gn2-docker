@@ -86,4 +86,6 @@ RUN mkdir -p /home/zas1024
 RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip && \
     unzip plink-1.07-x86_64.zip -d /home/zas1024
 
+RUN git clone git@github.com:genenetwork/pylmm_gn2.git /home/zas1024/pyLMM
+
 CMD ["/usr/bin/supervisord"]
