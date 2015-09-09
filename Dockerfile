@@ -26,7 +26,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN virtualenv ve27
 
 # fetch the list of Python module dependencies
-RUN wget --quiet https://raw.githubusercontent.com/dannyarends/genenetwork2/master/misc/requirements.txt
+RUN wget --quiet https://raw.githubusercontent.com/genenetwork/genenetwork2/master/misc/requirements.txt
 
 # install pp module separately
 RUN wget http://www.parallelpython.com/downloads/pp/pp-1.6.3.tar.gz && \
