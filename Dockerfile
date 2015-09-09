@@ -25,18 +25,8 @@ RUN pip install virtualenv
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN virtualenv ve27
 
-# MySQL setup
-ADD mysql_setup.sql /tmp/mysql_setup.sql
-RUN /etc/init.d/mysql start && mysql < /tmp/mysql_setup.sql
-
-## Download the simplified DB from the old sourceforge repository
-## and pipe it into MySQL on the fly so as not to waste time
-RUN /etc/init.d/mysql start && \
-    wget --quiet -O - 'http://downloads.sourceforge.net/project/genenetwork/db_webqtl_simplified_1.sql.gz?r=&ts=1429273316&use_mirror=iweb' | \
-    gzip -dc | mysql --user=GN --password=mypass db_webqtl
-
 # fetch the list of Python module dependencies
-RUN wget --quiet https://raw.githubusercontent.com/dannyarends/genenetwork2/master/misc/requirements.txt
+RUN wget --quiet https://raw.githubusercontent.com/genenetwork/genenetwork2/master/misc/requirements.txt
 
 # install pp module separately
 RUN wget http://www.parallelpython.com/downloads/pp/pp-1.6.3.tar.gz && \
@@ -72,14 +62,6 @@ RUN source ~/ve27/bin/activate && \
 RUN apt-get install -y r-cran-qtl
 RUN apt-get install -y supervisor
 
-COPY my_settings.py /root/
-COPY run_gn2_server.sh /root/
-COPY supervisord.conf /etc/supervisor/conf.d/
-RUN mkdir -p /var/log/supervisor
-
-# until path settings are introduced, simply use the same path
-RUN mkdir -p /home/zas1024
-
 # download and install / unpack plink (a requirement)
 RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip && \
     unzip plink-1.07-x86_64.zip -d /home/zas1024
@@ -87,5 +69,28 @@ RUN wget http://pngu.mgh.harvard.edu/~purcell/plink/dist/plink-1.07-x86_64.zip &
 # download and install pyLMM inside the docker image (for development you might want to add it from the localhost on the docker run commandline)
 # docker run -i -t -v $(pwd):/home/zas1024/gene -v /path/to/pylmm_gn2/:/home/zas1024/pyLMM -p 5003:5003 gn
 RUN git clone https://github.com/genenetwork/pylmm_gn2.git /home/zas1024/pyLMM
+
+# MySQL setup
+ADD mysql_setup.sql /tmp/mysql_setup.sql
+RUN /etc/init.d/mysql start && mysql < /tmp/mysql_setup.sql
+
+# New database adapter setup genenetwork 2
+# Requires: https://s3.amazonaws.com/genenetwork2/db_webqtl_s.zip
+RUN wget --quiet 'https://s3.amazonaws.com/genenetwork2/db_webqtl_s.zip'
+RUN unzip -o db_webqtl_s.zip -d /var/lib/mysql/
+
+# make sure to set the permissions on the mysql database
+RUN chown -R mysql:mysql /var/lib/mysql/db_webqtl_s/
+RUN chmod 700 /var/lib/mysql/db_webqtl_s/
+RUN chmod 660 /var/lib/mysql/db_webqtl_s/*
+
+# Settings / startup script and other stuff is copied to the root
+COPY my_settings.py /root/
+COPY run_gn2_server.sh /root/
+COPY supervisord.conf /etc/supervisor/conf.d/
+RUN mkdir -p /var/log/supervisor
+
+# until path settings are introduced, simply use the same path
+RUN mkdir -p /home/zas1024
 
 CMD ["/usr/bin/supervisord"]
