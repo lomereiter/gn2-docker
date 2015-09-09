@@ -1,4 +1,4 @@
-FROM ubuntu-debootstrap
+FROM ubuntu
 
 MAINTAINER Artem Tarasov <lomereiter@gmail.com>
 WORKDIR /root
