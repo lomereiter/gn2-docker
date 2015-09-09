@@ -75,12 +75,11 @@ ADD mysql_setup.sql /tmp/mysql_setup.sql
 RUN /etc/init.d/mysql start && mysql < /tmp/mysql_setup.sql
 
 # New database adapter setup genenetwork 2
-# Requires: https://s3.amazonaws.com/genenetwork2/db_webqtl_small.zip
+# Requires: https://s3.amazonaws.com/genenetwork2/db_webqtl_s.zip
 RUN wget --quiet 'https://s3.amazonaws.com/genenetwork2/db_webqtl_s.zip'
-
-#ADD db_webqtl_small.zip db_webqtl_small.zip
 RUN unzip -o db_webqtl_s.zip -d /var/lib/mysql/
 
+# make sure to set the permissions on the mysql database
 RUN chown -R mysql:mysql /var/lib/mysql/db_webqtl_s/
 RUN chmod 700 /var/lib/mysql/db_webqtl_s/
 RUN chmod 660 /var/lib/mysql/db_webqtl_s/*
