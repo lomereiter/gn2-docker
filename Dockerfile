@@ -58,8 +58,7 @@ RUN source ~/ve27/bin/activate && \
     pip install -r requirements.txt && \
     pip install rpy2
 
-# install R/qtl
-RUN apt-get install -y r-cran-qtl
+# install supervisor
 RUN apt-get install -y supervisor
 
 # download and install / unpack plink (a requirement)
@@ -83,6 +82,10 @@ RUN unzip -o db_webqtl_s.zip -d /var/lib/mysql/
 RUN chown -R mysql:mysql /var/lib/mysql/db_webqtl_s/
 RUN chmod 700 /var/lib/mysql/db_webqtl_s/
 RUN chmod 660 /var/lib/mysql/db_webqtl_s/*
+
+# Install R packages required for a working genenetwork R-environment
+ADD Renv_setup.R /tmp/Renv_setup.R
+RUN Rscript /tmp/Renv_setup.R
 
 # Settings / startup script and other stuff is copied to the root
 COPY my_settings.py /root/
