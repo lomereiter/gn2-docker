@@ -93,6 +93,9 @@ COPY run_gn2_server.sh /root/
 COPY supervisord.conf /etc/supervisor/conf.d/
 RUN mkdir -p /var/log/supervisor
 
+RUN source ~/ve27/bin/activate && \
+    pip install pandas
+
 # until path settings are introduced, simply use the same path
 RUN mkdir -p /home/zas1024
 
